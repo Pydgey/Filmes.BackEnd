@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using FilmesAPIServer.Data;
 using System;
 using FilmesAPIServer.Models;
+using FilmesAPIServer.Exceptions;
+using FilmesAPIServer.ViewModel;
+using FilmesAPIServer.InputModel;
 
 namespace FilmesAPIServer.Controllers
 {
@@ -26,6 +29,10 @@ namespace FilmesAPIServer.Controllers
                 .AsNoTracking()
                 .ToListAsync();
 
+            if(filme.Count() == 0)
+            {
+                return NoContent();
+            }
             return Ok(filme);
         }
 
@@ -40,7 +47,7 @@ namespace FilmesAPIServer.Controllers
         }
 
         [HttpPost("filmes")]
-        public async Task<IActionResult> PostAsync ([FromBody]Filmes filme)
+        public async Task<ActionResult<Filmes>> PostAsync ([FromBody]Filmes filme)
         {
             if(!ModelState.IsValid)
             {
@@ -52,14 +59,14 @@ namespace FilmesAPIServer.Controllers
                 await _context.SaveChangesAsync();
                 return Created($"v1/filmes/{filme.Id}", filme);
             }
-            catch (Exception ex)
+            catch (FilmeJaCadastradoException ex)
             {
-                return UnprocessableEntity(ex);
+                return UnprocessableEntity("Já existe um filme com esse nome cadastrado");
             }
         }
 
         [HttpPut("filmes/{id}")]
-        public async Task<IActionResult> PutAsync([FromRoute]int id,[FromBody]Filmes filme)
+        public async Task<IActionResult> PutAsync([FromRoute]int id,[FromBody]FilmeInputModel filme)
         {
             if (!ModelState.IsValid)
             {
@@ -82,9 +89,9 @@ namespace FilmesAPIServer.Controllers
                 await _context.SaveChangesAsync();
                 return Ok(model);
             }
-            catch(Exception ex)
+            catch(FilmeNaoCadastradoException ex)
             {
-                return UnprocessableEntity();
+                return NotFound("O Filme não foi encontrado");
             }
         }
 
@@ -101,9 +108,9 @@ namespace FilmesAPIServer.Controllers
                 await _context.SaveChangesAsync();
                 return Ok();
             }
-            catch (Exception ex)
+            catch (FilmeNaoCadastradoException ex)
             {
-                return NotFound();
+                return NotFound("O Filme não foi encontrado");
             }
         }
     }
