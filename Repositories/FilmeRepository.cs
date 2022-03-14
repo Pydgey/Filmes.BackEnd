@@ -1,4 +1,5 @@
-﻿using FilmesAPIServer.Models;
+﻿using FilmesAPIServer.Data;
+using FilmesAPIServer.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 

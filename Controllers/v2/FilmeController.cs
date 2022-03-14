@@ -1,4 +1,5 @@
-﻿using FilmesAPIServer.Exceptions;
+﻿using FilmesAPIServer.Data;
+using FilmesAPIServer.Exceptions;
 using FilmesAPIServer.InputModel;
 using FilmesAPIServer.Services;
 using FilmesAPIServer.ViewModel;
@@ -28,7 +29,7 @@ namespace FilmesAPIServer.Controllers.v2
             return Ok(filmes);
         }
 
-        [HttpGet("filmes/{id}")]
+        [HttpGet("filmes/buscar/{id}")]
         public async Task<ActionResult<FilmeViewModel>> Obter([FromRoute] int id)
         {
             var filme = await _filmeService.Obter(id);
@@ -39,7 +40,7 @@ namespace FilmesAPIServer.Controllers.v2
             return Ok(filme);
         }
 
-        [HttpGet("filmes/{ano}")]
+        [HttpGet("filmes/obter/{ano}")]
         public async Task<ActionResult<FilmeViewModel>> ObterAno([FromRoute] int ano)
         {
             var filmes = await _filmeService.ObterAno(ano);
